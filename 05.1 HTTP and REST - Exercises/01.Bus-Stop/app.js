@@ -1,26 +1,23 @@
 function getInfo() {
-    debugger;
-    const BASE_URL = 'http://localhost:3030/jsonstore/bus/businfo/';
+    const stopId = document.querySelector('#stopId')
+    const stopName = document.querySelector('#stopName')
+    const buses = document.querySelector('#buses')
 
-    const stopIdInput = document.getElementById('stopId');
-    const stopNameContainer = document.getElementById('stopName');
-    const busesContainer = document.getElementById('buses');
-    const stopId = stopIdInput.value;
 
-    //const containerOfInfo = document.getElementById('result'); //result -> stop name
-    busesContainer.innerHTML='';
-    stopNameContainer.innerHTML='';
-    fetch(`${BASE_URL}${stopId}`)
-    .then((response) => response.json())
-    .then((busInfo) => {
-        const {name,buses} = busInfo;
-        stopNameContainer.textContent = name;
-        for (const busId in buses) {
-            const li = document.createElement('li');
-            li.textContent = `Bus ${busId} arrives in ${buses[busId]} minutes`
-            busesContainer.appendChild(li);
+    function createElementWithTextContent(tag, textContent) {
+        const e = document.createElement(tag)
+        e.textContent = textContent
+        return e
+    }
+
+    const busInformation = 'http://localhost:3030/jsonstore/bus/businfo/'
+    fetch(`${busInformation}${stopId.value}`).then(x => x.json()).then(x => {
+        stopName.textContent = x['name']
+        for (const key in x['buses']) {
+            buses.appendChild(createElementWithTextContent('li', `Bus ${key} arrives in ${x['buses'][key]} minutes`))
         }
+    }).catch(() => {
+        stopName.textContent = 'Error'
     })
-    .catch((err) => stopNameContainer.textContent = 'Error');
 
 }
